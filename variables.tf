@@ -9,35 +9,27 @@ variable "location" {
   default     = "South Central US"
 }
 
-variable "vnet_name" {
-  description = "The name of the virtual network"
-  type        = string
+variable "vnets" {
+  description = "Map of virtual networks with subnets"
+  type = map(object({
+    name                = string
+    address_space       = list(string)
+    resource_group_key  = string
+    subnets             = list(object({
+      name           = string
+      address_prefix = string
+    }))
+  }))
 }
 
-variable "vnet_address_space" {
-  description = "The address space for the virtual network"
-  type        = list(string)
-}
-
-variable "subnet_names" {
-  description = "The names of the subnets"
-  type        = list(string)
-}
-
-variable "subnet_prefixes" {
-  description = "The address prefixes for the subnets"
-  type        = list(string)
-}
-
-variable "vm_name" {
-  description = "The name of the virtual machine"
-  type        = string
-}
-
-variable "vm_size" {
-  description = "The size of the virtual machine"
-  type        = string
-  default     = "Standard_B1s"
+variable "vms" {
+  description = "Map of virtual machines"
+  type = map(object({
+    name                = string
+    resource_group_key  = string
+    size                = string
+    subnet_key          = optional(string)
+  }))
 }
 
 variable "admin_username" {
