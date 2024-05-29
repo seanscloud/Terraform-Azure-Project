@@ -10,12 +10,11 @@ variable "location" {
 }
 
 variable "vnets" {
-  description = "Map of virtual networks with subnets"
+  description = "A map of Virtual Network definitions"
   type = map(object({
-    name                = string
-    address_space       = list(string)
-    resource_group_key  = string
-    subnets             = list(object({
+    name          = string
+    address_space = list(string)
+    subnets = list(object({
       name           = string
       address_prefix = string
     }))
@@ -23,21 +22,20 @@ variable "vnets" {
 }
 
 variable "vms" {
-  description = "Map of virtual machines"
+  description = "A map of Virtual Machine definitions"
   type = map(object({
-    name                = string
-    resource_group_key  = string
-    size                = string
-    subnet_key          = optional(string)
+    name       = string
+    size       = string
+    subnet_key = string
   }))
 }
 
 variable "admin_username" {
-  description = "The admin username for the virtual machine"
+  description = "The admin username for the VM"
   type        = string
 }
 
 variable "admin_password" {
-  description = "The admin password for the virtual machine"
+  description = "The admin password for the VM"
   type        = string
 }
