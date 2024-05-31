@@ -24,13 +24,19 @@ resource "azurerm_virtual_network" "tapVN" {
 }
 
 resource "azurerm_subnet" "tapSUB" {
-  for_each = { for vnet_key, vnet_value in var.vnets : vnet_key => vnet_value.subnets }
-  count    = length(each.value)
+  for_each = {
+    for vnet_key, vnet_value in var.vnets :
+    "${vnet_key}-${vnet_value.subnets[0].name}" => {
+      vnet_key       = vnet_key
+      subnet_name    = vnet_value.subnets[0].name
+      address_prefix = vnet_value.subnets[0].address_prefix
+    }
+  }
 
-  name                 = each.value[count.index].name
-  address_prefixes     = [each.value[count.index].address_prefix]
+  name                 = each.value.subnet_name
+  address_prefixes     = [each.value.address_prefix]
   resource_group_name  = azurerm_resource_group.tapRG.name
-  virtual_network_name = azurerm_virtual_network.tapVN[each.key].name
+  virtual_network_name = azurerm_virtual_network.tapVN[each.value.vnet_key].name
 }
 
 resource "azurerm_network_interface" "tapNIC" {
@@ -41,7 +47,7 @@ resource "azurerm_network_interface" "tapNIC" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.tapSUB[each.value.subnet_key].id
+    subnet_id                     = azurerm_subnet.tapSUB["${each.value.subnet_key}-${var.vnets[each.value.subnet_key].subnets[0].name}"].id
     private_ip_address_allocation = "Dynamic"
   }
 }

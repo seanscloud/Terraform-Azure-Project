@@ -1,4 +1,4 @@
-resource_group = "Terraform Deployment Project"
+resource_group = "Terraform_Deployment_Project"
 location       = "South Central US"
 vnets = {
   vnet1 = {
